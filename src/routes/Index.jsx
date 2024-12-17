@@ -6,6 +6,8 @@ import PublicRoute from "./PublicRoutes";
 import PrivateRoutes from "./PrivateRoutes";
 import DashBoard from "../pages/private/DashBoard";
 import PublicLayout from "../layouts/PublicLayout";
+import { Register } from "../pages/public/Register";
+import Product from "../pages/public/Product";
 
 const isAuthenticated = true
 export const AppRoutes = createBrowserRouter(
@@ -30,6 +32,15 @@ export const AppRoutes = createBrowserRouter(
                     path: '*',
                     element: <PublicRoute><NotFound /></PublicRoute>
                 },
+                {
+                    path: "/register",
+                    element: <PublicRoute><Register /></PublicRoute>
+                },
+                {
+                    path: "/products",
+                    element: <PublicRoute><Product /></PublicRoute>
+                }
+
             ]
         },
 
@@ -38,7 +49,7 @@ export const AppRoutes = createBrowserRouter(
             path: '/dashBoard',
             children: [
                 {
-                    index:true,
+                    index: true,
                     element: <PrivateRoutes isAuthenticated={isAuthenticated}> <DashBoard /> </PrivateRoutes>
                 }
             ]

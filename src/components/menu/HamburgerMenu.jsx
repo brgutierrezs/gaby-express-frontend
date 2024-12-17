@@ -50,16 +50,18 @@ const HamburgerMenu = () => {
                             <Link
                                 to="/"
                                 className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
+                                onClick={toggleMenu}
                             >
-                                Inicio
+                                Iniciar Sesion
                             </Link>
                         </li>
                         <li>
                             <Link
-                                to="/productos"
+                                to="/register"
                                 className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
+                                onClick={toggleMenu}
                             >
-                                Productos
+                                Registrarse
                             </Link>
                         </li>
                         <li>

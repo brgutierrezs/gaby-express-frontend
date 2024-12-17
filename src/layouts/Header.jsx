@@ -36,7 +36,8 @@ const Header = () => {
 
                     {/* User Options */}
                     <div className=" hidden lg:flex space-x-4  items-center ">
-                        <Link className="hover:text-gray-200 " onClick={toggleLoginModal}>{isLoginOpen ? "Cerrar Sesion" : "Iniciar Sesion"}</Link>
+                        <Link className="hover:text-gray-200 " onClick={toggleLoginModal}>{isLoginOpen ? "Cerrar Sesion" : "Iniciar Sesion "}</Link>
+                        <Link to="/register" className="hover:text-gray-200 " > Registrarse</Link>
                         <Link to='/cart' className="hover:text-gray-200">🛒 Cart</Link>
                     </div>
 
