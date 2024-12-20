@@ -1,35 +1,34 @@
 import { useEffect, useState } from "react"
 import ProductCard from "../../components/products/ProductCard";
-
+import useAxios from "../../hooks/useAxios";
+import globalUrl from "../../config/globalUrl";
 
 const Product = () => {
 
     const [products, setProducts] = useState([]);
-
+    const {data, loading, error, fetchData } = useAxios();
 
     useEffect(() => {
-
+    
         const fetchProducts = async () => {
-
-            try {
-                const response = await fetch('https://fakestoreapi.com/products');
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} ${response.statusText}`);
-                }
-                const data = await response.json();
-                setProducts(data)
-                console.log(data)
-            } catch (error) {
-                console.log(error);
-            }
-
-
-        }
+            await fetchData(globalUrl + "/product/all-product", 'GET');
+            
+        };
 
         fetchProducts();
+    }, []); 
 
-    }, [])
+    useEffect(() => {
+        if (data?.products) {
+            setProducts(data.products);
+            console.log(products)
+            console.log('datos',data);
+        }
+    }, [data]);
 
+    // Renderizado condicional basado en el estado
+    if (loading) return <p>Cargando productos...</p>;
+    if (error) return <p>Error: {error}</p>;
     // Funciones para botones
     const handlePreview = (product) => {
         alert(`Previsualizando: ${product.title}`);
@@ -38,12 +37,13 @@ const Product = () => {
     const handleAddToCart = (product) => {
         alert(`Producto agregado al carrito: ${product.title}`);
     };
-
+    
+    
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 box-border ">
             {products.map((product) => (
-                
+
                 <ProductCard
                     key={product.id}
                     product={product}
