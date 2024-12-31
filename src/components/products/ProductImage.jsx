@@ -1,6 +1,7 @@
 
 import PropTypes from 'prop-types';
-import  DEFAULT_PRODUCT_IMAGE  from '../../assets/default-img.jpg';
+import DEFAULT_PRODUCT_IMAGE from '../../assets/default-img.jpg';
+
 
 const ProductImage = ({ images, productName, className }) => {
 
@@ -17,14 +18,19 @@ const ProductImage = ({ images, productName, className }) => {
 
 
     return (
-        <img
-        src={getImageUrl()}
-        alt={productName}
-        className={className}
-        onError={(e) => {
-            e.target.src = DEFAULT_PRODUCT_IMAGE;
-        }}
-        />
+        
+            <img
+                src={getImageUrl()}
+                alt={productName}
+                className={className}
+                onError={(e) => {
+                    e.target.src = DEFAULT_PRODUCT_IMAGE;
+                }}
+                
+            />
+           
+        
+
     )
 }
 
@@ -36,7 +42,8 @@ ProductImage.propTypes = {
         })
     ),
     productName: PropTypes.string.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
+    productId: PropTypes.number
 };
 
 export default ProductImage

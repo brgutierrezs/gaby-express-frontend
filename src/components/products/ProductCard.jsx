@@ -1,17 +1,21 @@
 import PropTypes from 'prop-types'
 import ProductImage from './ProductImage'
+import { Link } from 'react-router-dom'
 const ProductCard = ({ product, onPreview, handleAddToCart }) => {
 
     return (
 
         <div className="border border-gray-200 rounded-lg shadow-md p-4 bg-white hover:shadow-lg transition duration-300  ">
             {/* Imagen del Producto */}
+            <Link to={'/product/'+product.id}>
             <ProductImage
                 images={product.ProductImages}
                 productName={product.name}
                 className="w-full h-48 object-contain mb-4"
+                productId = {product.id}
 
             />
+            </Link>
             {/* Título */}
             <h3 title={product.name} className=' text-xl font-semibold mb-2 truncate '>{product.name}</h3>
 

@@ -7,7 +7,8 @@ import PrivateRoutes from "./PrivateRoutes";
 import DashBoard from "../pages/private/DashBoard";
 import PublicLayout from "../layouts/PublicLayout";
 import { Register } from "../pages/public/Register";
-import Product from "../pages/public/Product";
+import Product from "../pages/public/product/Product";
+import ProductDetail from "../pages/public/product/ProductDetail";
 
 const isAuthenticated = true
 export const AppRoutes = createBrowserRouter(
@@ -38,8 +39,16 @@ export const AppRoutes = createBrowserRouter(
                 },
                 {
                     path: "/products",
-                    element: <PublicRoute><Product /></PublicRoute>
+                    element: <PublicRoute><Product /></PublicRoute>,
+                   
+                },
+                {
+                    path: "product/:id",// Subruta para detalle de producto
+                    element: <PublicRoute><ProductDetail /></PublicRoute>
+
                 }
+
+
 
             ]
         },
