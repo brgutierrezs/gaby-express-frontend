@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import ProductCard from "../../../components/products/ProductCard";
 import useAxios from "../../../hooks/useAxios";
 import globalUrl from "../../../config/globalUrl";
-import { Outlet } from "react-router-dom";
+
 
 const Product = () => {
 
@@ -22,8 +22,8 @@ const Product = () => {
     useEffect(() => {
         if (data?.products) {
             setProducts(data.products);
-            console.log(products)
-            console.log('datos',data);
+            // console.log(products)
+            // console.log('datos',data);
         }
     }, [data]);
 
@@ -52,7 +52,7 @@ const Product = () => {
                     handleAddToCart={handleAddToCart}
                 />
             ))}
-         <Outlet />
+         
         </div>
     )
 }

@@ -1,13 +1,14 @@
-import { AppRoutes } from './routes/' 
+import { AuthProvider } from './hooks/authContext'
+import { AppRoutes } from './routes/Index'
 import { RouterProvider } from 'react-router-dom'
 
 function App() {
-  
+
 
   return (
-    <>
-    <RouterProvider router={AppRoutes}/>
-    </>
+    <AuthProvider>
+      <RouterProvider router={AppRoutes} />
+    </AuthProvider>
 
   )
 }

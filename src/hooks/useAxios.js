@@ -11,27 +11,36 @@ const useAxios = () => {
         setError(null);
         try {
             let response;
-            
+
             if (method === 'GET') {
-                response = await axios.get(url, { params });
+                response = await axios.get(url, {
+                    params,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true, // Permite enviar cookies
+                });
             } else {
                 response = await axios({
                     method,
                     url,
-                    data: body
+                    data: body,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true, // Permite enviar cookies
                 });
             }
             setData(response.data);
-            
         } catch (err) {
-            setError(err.message || 'Error en la petición');
+            // Captura el mensaje del backend si existe
+            const message = err.response?.data?.message || 'Error en la petición';
+            setError({ status: err.response?.status, message });
         } finally {
             setLoading(false);
         }
     };
 
-
-    
     return { data, loading, error, fetchData };
 };
 

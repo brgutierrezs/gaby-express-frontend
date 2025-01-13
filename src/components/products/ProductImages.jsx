@@ -10,6 +10,7 @@ const ProductImages = ({ images, productName }) => {
     const [selectedImage, setSelectedImage] = useState(images[0]?.id);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isZoomed, setIsZoomed] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false); 
 
     const selectedImageUrl = images.find(img => img.id === selectedImage)?.image_url || DEFAULT_PRODUCT_IMAGE;
 
@@ -23,6 +24,11 @@ const ProductImages = ({ images, productName }) => {
         setPosition({ x, y });
     };
 
+    const handleClickImage = () => {
+        setIsModalOpen(!isModalOpen); // Abrir el modal al hacer clic
+    };
+
+
     return (
         <div className="flex flex-col space-y-4">
             <div
@@ -33,6 +39,7 @@ const ProductImages = ({ images, productName }) => {
             >
                 <img
                     src={selectedImageUrl}
+                    onClick={handleClickImage}
                     onError={(e) => { e.target.src = DEFAULT_PRODUCT_IMAGE }}
                     alt={productName || "Imagen no disponible"}
                     className="w-full h-full object-contain transition-transform duration-75"
@@ -48,6 +55,26 @@ const ProductImages = ({ images, productName }) => {
                 onSelectImage={setSelectedImage}
                 productName={productName}
             />
+
+                  {/* Modal */}
+                  {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+                     onClick={handleClickImage}>
+                    <div className="relative">
+                        <img
+                            src={selectedImageUrl}
+                            alt={productName || "Imagen ampliada"}
+                            className="max-w-full max-h-screen object-contain"
+                        />
+                        <button
+                            onClick={handleClickImage}
+                            className="absolute top-2 right-2 bg-gray-100 text-gray-800 rounded-full px-4 py-2"
+                        >
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

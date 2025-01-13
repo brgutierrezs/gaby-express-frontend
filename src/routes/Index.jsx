@@ -9,8 +9,11 @@ import PublicLayout from "../layouts/PublicLayout";
 import { Register } from "../pages/public/Register";
 import Product from "../pages/public/product/Product";
 import ProductDetail from "../pages/public/product/ProductDetail";
+import CreateProduct from "../pages/private/product/CreateProduct";
+import AdminRoutes from "./AdminRoutes";
 
 const isAuthenticated = true
+const roll = "admin"
 export const AppRoutes = createBrowserRouter(
 
     [
@@ -40,7 +43,7 @@ export const AppRoutes = createBrowserRouter(
                 {
                     path: "/products",
                     element: <PublicRoute><Product /></PublicRoute>,
-                   
+
                 },
                 {
                     path: "product/:id",// Subruta para detalle de producto
@@ -55,11 +58,22 @@ export const AppRoutes = createBrowserRouter(
 
         //Rutas privadas
         {
-            path: '/dashBoard',
+            path: '/dashboard',
             children: [
                 {
                     index: true,
                     element: <PrivateRoutes isAuthenticated={isAuthenticated}> <DashBoard /> </PrivateRoutes>
+                },
+
+            ]
+        },
+        //Rutas de administrador
+        {
+            path: '/admin',
+            children: [
+                {
+                    index: true,
+                    element: <AdminRoutes roll={roll}><CreateProduct /></AdminRoutes>
                 }
             ]
         }
