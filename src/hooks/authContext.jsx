@@ -17,52 +17,68 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
 
-    const { data, error, fetchData, loading } = useAxios();
+    const { error, fetchData, loading } = useAxios();
 
     const [auth, setAuth] = useState({
-        isAutenticated: false,
+        isAuthenticated: false,
         user: null,
         loading: true,
-        cookie: null
+        cookie: null,
+        error: null
     });
     // useEffect para verificar la session
     useEffect(() => {
 
-        const obtainCookie = async () => {
+        const checkAuthentication = async () => {
             try {
-                
-                await fetchData(globalUrl + "/users//get-cookie", 'GET');
+
+                //obtener cookie
+                const cookieResponse = await fetchData(globalUrl + "/users//get-cookie", 'GET');
+
+                //preguntamos si la cookie viene en la data
+                const cookieValue = cookieResponse?.cookie;
+
+                //obtener perfil de usuario
+                const userResponse = await fetchData(globalUrl + "/users/get-profile", 'GET');
+
+                //preguntamos si el perfil de usuario viene en la data
+                const userProfile = userResponse?.user;
+
+                // Si ambas peticiones son exitosas
+                if (cookieValue && userProfile) {
+                    setAuth({
+                        isAuthenticated: true,
+                        user: userProfile,
+                        loading: false,
+                        cookie: cookieValue,
+                        error: null
+                    });
+                } else {
+
+                    // Si no se obtiene la cookie o el perfil del usuario
+                    throw new Error('Datos de autenticación incompletos');
+                }
+            } catch (err) {
+                // Manejo de errores
+                console.error('Error de autenticación:', err.message);
+                error ? console.error('Error del end point :', error) : null;
+
+                // Actualiza el estado de autenticación
                 setAuth({
-                   cookie: data.cookie
-                })
-            } catch  {
-                console.error('Error al obtener el token')
-            }
-        }
-
-        const checkAuth = async () => {
-
-            try {
-                
-                await fetchData(globalUrl + "/users/get-profile?id=1", 'GET');
-
-
-            } catch {
-                setAuth({
-                    isAutenticated: false,
+                    isAuthenticated: false,
                     user: null,
-                    loading: false
-                })
+                    loading: false,
+                    cookie: null,
+                });
             }
         }
-        obtainCookie();
-        checkAuth();
+
+        checkAuthentication();
     }, [])
 
-    if (loading) return <p>Cargando...</p>
-    console.log('datos del fetch obtener profile', data)
-    console.log('datos del error', error);
-    
+    if (loading) return <p>Cargando...</p>;
+    //console log para verificar el estado de autenticación
+    console.log(auth.isAuthenticated )
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>
             {children}

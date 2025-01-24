@@ -1,20 +1,22 @@
 import { Navigate } from "react-router-dom";
 import PropTypes from 'prop-types'
+import { useAuth } from "../hooks/authContext";
 
-const PrivateRoutes = ({ children, isAuthenticated }) => {
+const PrivateRoutes = ({ children }) => {
 
-     
-    console.log(isAuthenticated);
+    const { auth } = useAuth();
 
-    return !isAuthenticated ? <Navigate to='/' /> : children
+   
+
+    return !auth.isAuthenticated ? <Navigate to='/' /> : children
 
 
 }
 
 
-PrivateRoutes.propTypes  = {
+PrivateRoutes.propTypes = {
     children: PropTypes.node.isRequired,
-    isAuthenticated: PropTypes.bool.isRequired
+
 }
 
 

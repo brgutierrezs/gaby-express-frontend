@@ -3,13 +3,15 @@ import { useAuth } from '../../hooks/authContext';
 import useAxios from '../../hooks/useAxios';
 import { useEffect, useState } from 'react';
 import globalUrl from '../../config/globalUrl';
+import { useNavigate } from 'react-router-dom';
+
 
 const LoginModalCompoennt = ({ modalRef, toggleLoginModal }) => {
   const { auth, setAuth } = useAuth();
   const { data, error, fetchData, loading } = useAxios();
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
-
+  const navigate = useNavigate();
   const handledLoginData = (e) => {
     setLoginData({
       ...loginData,
@@ -24,17 +26,19 @@ const LoginModalCompoennt = ({ modalRef, toggleLoginModal }) => {
   };
 
   useEffect(() => {
+    // Si se obtienen los datos del usuario
     if (data?.data) {
       // Actualiza el estado de autenticación
       setAuth({
-        isAutenticated: true,
+        isAuthenticated: true,
         user: data.data,
         loading: false,
-        cookie: auth.cookie
       });
 
       // Establece el mensaje de éxito
       setMessage('Inicio de sesión exitoso. ¡Bienvenido!');
+      //navegamos al dashboard
+      navigate('/dashboard');
       
     } else if (error) {
       // Establece el mensaje de error del backend
@@ -42,10 +46,11 @@ const LoginModalCompoennt = ({ modalRef, toggleLoginModal }) => {
     }
   }, [data, error, auth.cookie, setAuth, message]);
 
-if (loading) {
+if (auth.loading) {
     return <p>Cargando...</p>;
   
 }
+
 
   return (
     <>
