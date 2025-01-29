@@ -1,14 +1,15 @@
 import { Outlet } from "react-router-dom"
-import Header from "./Header"
-import { Footer } from "./Footer"
+import PrivateHeader from "../private/PrivateHeader"
+import { Footer } from "../public/Footer"
 
 
 const PrivateLayout = () => {
   return (
     <div className="flex flex-col min-h-screen bg-indigo-50">
 
+      <p>estas en el private layout</p>
       {/* Header */}
-      <Header />
+      <PrivateHeader />
 
       <main className="flex-grow bg-gray-100">
 

@@ -18,13 +18,14 @@ function App() {
 export default App
 
 import PropTypes from 'prop-types';
+import Loading from './components/common/Loading'
 
 function AuthWrapper({ children }) {
   const { auth } = useAuth();
 
   
   if (auth.loading) {
-    return <p>Cargando...</p>;
+    return <Loading/>
   }
 
   if (auth.error) {

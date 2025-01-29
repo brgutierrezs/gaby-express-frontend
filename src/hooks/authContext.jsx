@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 import PropTypes from 'prop-types';
 import useAxios from "./useAxios";
 import globalUrl from "../config/globalUrl";
+import Loading from "../components/common/Loading";
 
 const AuthContext = createContext();
 
@@ -76,9 +77,9 @@ export const AuthProvider = ({ children }) => {
         checkAuthentication();
     }, [])
 
-    if (loading) return <p>Cargando...</p>;
+    if (loading) return <Loading />;
     //console log para verificar el estado de autenticación
-    console.log(auth.isAuthenticated )
+    // console.log(auth.isAuthenticated )
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>
             {children}

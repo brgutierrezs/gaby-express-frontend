@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"
-import HamburgerMenu from "../components/menu/HamburgerMenu";
-import LoginModal from "../pages/public/LoginUser/LoginModal";
+import HamburgerMenu from "../../components/menu/HamburgerMenu";
+import LoginModal from "../../pages/public/LoginUser/LoginModal";
 
 
 const Header = () => {

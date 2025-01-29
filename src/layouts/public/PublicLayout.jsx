@@ -11,8 +11,10 @@ const PublicLayout = () => {
 
 
     return (
-        <div className="flex flex-col min-h-screen bg-indigo-50">
 
+
+        <div className="flex flex-col min-h-screen bg-indigo-50">
+            <p>estas en el public layout</p>
             {/* Header */}
             <Header />
 
@@ -28,7 +30,7 @@ const PublicLayout = () => {
 
             {/* Footer */}
             <Footer />
-            
+
         </div>
     )
 }

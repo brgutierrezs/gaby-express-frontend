@@ -5,13 +5,13 @@ import NotFound from "../pages/public/NotFound";
 import PublicRoute from "./PublicRoutes";
 import PrivateRoutes from "./PrivateRoutes";
 import DashBoard from "../pages/private/DashBoard";
-import PublicLayout from "../layouts/PublicLayout";
-import { Register } from "../pages/public/Register";
+import { Register } from "../pages/public/user/Register";
 import Product from "../pages/public/product/Product";
 import ProductDetail from "../pages/public/product/ProductDetail";
 import CreateProduct from "../pages/private/product/CreateProduct";
 import AdminRoutes from "./AdminRoutes";
-import PrivateLayout from "../layouts/PrivateLayout";
+import IndexLayout from "../layouts/IndexLayout";
+import LogOut from "../pages/private/user/LogOut";
 
 
 
@@ -22,7 +22,7 @@ export const AppRoutes = createBrowserRouter(
         //Rutas Publicas
         {
             path: '/',
-            element: <PublicLayout />,
+            element: <IndexLayout />,
             children: [
                 {
                     index: true,
@@ -61,12 +61,16 @@ export const AppRoutes = createBrowserRouter(
         //Rutas privadas
         {
             path: '/dashboard',
-            element: <PrivateLayout />,
+            element: <IndexLayout />,
             children: [
                 {
                     index: true,
                     element: <PrivateRoutes > <DashBoard /> </PrivateRoutes>
                 },
+                {
+                    path: 'cerrar-session',
+                    element: <PrivateRoutes> <LogOut /></PrivateRoutes>
+                }
 
             ]
         },

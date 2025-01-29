@@ -1,8 +1,9 @@
 import { Menu, X } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const HamburgerMenu = () => {
+const HamburgerMenu = ({ auth }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -46,24 +47,38 @@ const HamburgerMenu = () => {
             >
                 <nav className="mt-3 border  border-gray-100 shadow-md rounded-md h-full ">
                     <ul className="space-y-6">
-                        <li>
+                        {!auth?.isAuthenticated ? <>
+                            <li>
+                                <Link
+                                    to="/iniciar-session"
+                                    className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
+                                    onClick={toggleMenu}
+                                >
+                                    Iniciar Sesion
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/register"
+                                    className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
+                                    onClick={toggleMenu}
+                                >
+                                    Registrarse
+                                </Link>
+                            </li>
+                        </>
+                            :
+                            <li>
                             <Link
-                                to="/"
+                                to="/cerrar-sesion"
                                 className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
-                                onClick={toggleMenu}
+                                
                             >
-                                Iniciar Sesion
+                                Cerrar Sesion
                             </Link>
-                        </li>
-                        <li>
-                            <Link
-                                to="/register"
-                                className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
-                                onClick={toggleMenu}
-                            >
-                                Registrarse
-                            </Link>
-                        </li>
+                        </li>}
+
+
                         <li>
                             <Link
                                 to="/categorias"
@@ -103,5 +118,11 @@ const HamburgerMenu = () => {
         </div>
     );
 };
+HamburgerMenu.propTypes = {
+    auth: PropTypes.shape({
+        isAuthenticated: PropTypes.bool,
+    }),
+};
+
 
 export default HamburgerMenu;

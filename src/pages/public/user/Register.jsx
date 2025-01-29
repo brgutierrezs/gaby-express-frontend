@@ -1,4 +1,4 @@
-import { ButtonComponent } from "../../components/common/ButtonComponent"
+import { ButtonComponent } from "../../../components/common/ButtonComponent"
 
 
 
@@ -11,7 +11,7 @@ export const Register = () => {
             <div className="bg-white rounded-md p-6 w-full max-w-md">
                 <h2 className="text-2xl font-bold mb-4 text-center text-black">Register</h2>
 
-                <from>
+                <form>
 
                     <div className="mb-4">
                         <label htmlFor="usuario" className="block text-sm font-medium text-gray-700">
@@ -49,7 +49,7 @@ export const Register = () => {
 
                     <ButtonComponent />
 
-                </from>
+                </form>
 
             </div>
 
