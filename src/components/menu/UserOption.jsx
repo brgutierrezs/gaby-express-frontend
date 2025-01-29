@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 
 const UserOption = ({ auth, toggleLoginModal }) => {
 
-console.log("informacion del auth", auth)
-
     return (
         <>
             {auth.isAuthenticated ?
