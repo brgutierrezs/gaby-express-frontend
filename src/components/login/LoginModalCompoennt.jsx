@@ -5,10 +5,16 @@ import { useEffect, useState } from 'react';
 import globalUrl from '../../config/globalUrl';
 import { Link, useNavigate } from 'react-router-dom';
 import Loading from '../common/Loading';
+import { debounceTime, Subject } from 'rxjs';
+
+
+//creamos nuestro observable
+const loginSend = new Subject();
+const loginSend$ = loginSend.asObservable();
 
 const LoginModalComponent = ({ modalRef, toggleLoginModal }) => {
-  const { auth, setAuth } = useAuth();
-  const { data, error, fetchData, loading } = useAxios();
+  const { setAuth } = useAuth();
+  const {   fetchData, loading } = useAxios();
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -23,31 +29,45 @@ const LoginModalComponent = ({ modalRef, toggleLoginModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
-    await fetchData(globalUrl + '/users/login', 'POST', {}, loginData);
+
+    loginSend.next(loginData);
   };
 
   const handleResendActivation = async () => {
     try {
       await fetchData(globalUrl + '/users/resend-activation', 'POST', {}, { email: loginData.email });
       setMessage('Se ha enviado un nuevo enlace de activación a tu correo');
-    } catch  {
+    } catch {
       setMessage('Error al enviar el enlace de activación');
     }
   };
 
   useEffect(() => {
-    if (data?.data) {
-      setAuth({
-        isAuthenticated: true,
-        user: data.data,
-        loading: false,
-      });
-      setMessage('Inicio de sesión exitoso. ¡Bienvenido!');
-      navigate('/dashboard');
-    } else if (error) {
-      setMessage(`Error al iniciar sesión: ${error.message}`);
+
+    //creamos la susbscription para controlar la cantidad de peticiones
+    const loginSendSubcription = loginSend$.pipe(debounceTime(500)).subscribe(async (formData) => {
+
+      try {
+        const response = await fetchData(globalUrl + '/users/login', 'POST', {}, formData);
+
+        setAuth({
+          isAuthenticated: true,
+          user: response.data,
+          loading: false,
+        });
+        setMessage('Inicio de sesión exitoso. ¡Bienvenido!');
+        navigate('/dashboard');
+      } catch (error) {
+        // Aquí capturamos el error que lanza useAxios
+        setMessage(`Error al iniciar sesión: ${error.message}`);
+      }
+    });
+
+    return () => {
+      return loginSendSubcription.unsubscribe();
     }
-  }, [data, error, auth.cookie, setAuth, navigate]);
+
+  }, [fetchData, setAuth, navigate]);
 
   return (
     <>
@@ -56,8 +76,8 @@ const LoginModalComponent = ({ modalRef, toggleLoginModal }) => {
           <h2 className="text-2xl font-bold mb-4 text-center text-black">Iniciar Sesión</h2>
 
           {message && (
-            <p className={`mb-4 p-3 rounded ${message.includes("Error") ? 
-              "text-red-600 bg-red-50" : 
+            <p className={`mb-4 p-3 rounded ${message.includes("Error") ?
+              "text-red-600 bg-red-50" :
               "text-green-600 bg-green-50"}`}>
               {message}
             </p>
@@ -80,8 +100,8 @@ const LoginModalComponent = ({ modalRef, toggleLoginModal }) => {
           {message === "Error al iniciar sesión: Correo No Registrado" && (
             <div className="mb-4 text-center">
               <p className="text-gray-700 mb-2">¿No tienes una cuenta?</p>
-              <Link 
-                to="register" 
+              <Link
+                to="register"
                 onClick={toggleLoginModal}
                 className="inline-block w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-200 text-center"
               >

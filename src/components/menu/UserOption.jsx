@@ -10,7 +10,7 @@ const UserOption = ({ auth, toggleLoginModal }) => {
                 <>
                     <Link to='/dashboard/cerrar-session' className="hover:text-gray-200" >Cerrar session</Link>
                     <Link to='/cart' className="hover:text-gray-200">🛒 Cart</Link>
-                    <Link>{auth.user.email} </Link>
+                    <Link to='/dashboard'>{auth.user.user_name} </Link>
                 </>
                 :
                 <>
@@ -25,7 +25,8 @@ UserOption.propTypes = {
     auth: PropTypes.shape({
         isAuthenticated: PropTypes.bool.isRequired,
         user: PropTypes.shape({
-            email: PropTypes.string.isRequired
+            email: PropTypes.string.isRequired,
+            user_name: PropTypes.string.isRequired
         }).isRequired
     }).isRequired,
     toggleLoginModal: PropTypes.func.isRequired
