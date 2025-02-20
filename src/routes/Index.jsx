@@ -12,6 +12,7 @@ import CreateProduct from "../pages/private/product/CreateProduct";
 import AdminRoutes from "./AdminRoutes";
 import IndexLayout from "../layouts/IndexLayout";
 import LogOut from "../pages/private/user/LogOut";
+import Login from "../pages/public/LoginUser/Login";
 
 
 
@@ -51,6 +52,10 @@ export const AppRoutes = createBrowserRouter(
                     path: "product/:id",// Subruta para detalle de producto
                     element: <PublicRoute><ProductDetail /></PublicRoute>
 
+                },
+                {
+                    path:'/login',
+                    element:<PublicRoute><Login/></PublicRoute>
                 }
 
 

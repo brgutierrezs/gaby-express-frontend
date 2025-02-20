@@ -42,7 +42,9 @@ const useAxios = () => {
             setError({ status, message }); // Guarda el error en el estado del hook
             throw { status, message }; // Lanza el error para manejarlo en el componente
         } finally {
+           
             setLoading(false);
+           
         }
     };
 

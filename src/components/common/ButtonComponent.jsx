@@ -1,4 +1,7 @@
-export const ButtonComponent = () => {
+import PropTypes from 'prop-types';
+
+export const ButtonComponent = ({text}) => {
+    
     return (
         <div>
             <button
@@ -17,8 +20,13 @@ export const ButtonComponent = () => {
                 active:translate-y-0 
                 active:shadow-sm"
             >
-                Registrarse
+                {text}
             </button>
         </div>
     );
+
+};
+
+ButtonComponent.propTypes ={
+    text:PropTypes.string
 };

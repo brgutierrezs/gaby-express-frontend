@@ -5,6 +5,7 @@ import { debounceTime, Subject } from "rxjs";
 import { useEffect, useState } from "react";
 import useAxios from "../../../hooks/useAxios";
 import globalUrl from '../../../config/globalUrl'
+import ButtonLoading from "../../../components/common/ButtonLoading";
 
 //validar si la session esta iniciada para redirigir al dashboard o index
 const registerSend = new Subject();
@@ -23,7 +24,7 @@ export const Register = () => {
 
 
     }); // creamos el estado que tendra los datos del registro
-    const [message, setMessate] = useState('');
+    const [message, setMessage] = useState('');
 
     //creamos el handled del formulario para capturar los datos de este
     const handledRegisterData = (e) => {
@@ -36,12 +37,13 @@ export const Register = () => {
     //creamos el handledSubmit para enviar el formulario
     const handledSubmit = (e) => {
         e.preventDefault();
-        setMessate('');
+        setMessage('');
         registerSend.next(registerForm);
     }
 
     //usamos el useEffect para crear la susbscription una sola vez la cual la usaremos cada vez que la funcion handledSubmit se ejecute
     useEffect(() => {
+        let navigationTimer = null;
 
         //creamos la susbcription
         const subscription = registerSend$.pipe(debounceTime(1000)).subscribe(async (form) => {
@@ -49,14 +51,31 @@ export const Register = () => {
             try {
                 //hacemos la peticion
                 const response = await fetchData(globalUrl + '/users/register', 'POST', {}, form);
+                if (response.status === "success") {
+                    setMessage(response.message);
+
+                    //redirigir a la pagina de iniciar session
+                    navigationTimer = setTimeout(() => {
+                        navigate('/login');
+                    }, 7000);
+
+
+                }
                 console.log(response);
             } catch (error) {
-                setMessate(`Error al registrarse: '  ${error.message}`);
+                //seteamos los mensajes correspondientes
+                setMessage(`Error al registrarse: '  ${error.message}`);
+            } finally {
+                setTimeout(() => {
+                    setMessage('');
+                }, 30000);
             }
         });
 
         return () => {
-            return subscription.unsubscribe();
+            subscription.unsubscribe();
+            // Limpiar el temporizador al desmontar el componente
+            if (navigationTimer) clearTimeout(navigationTimer);
         }
     }, [])
 
@@ -65,7 +84,7 @@ export const Register = () => {
         navigate("/", true);
     }
 
-    console.log(message, registerForm);
+
 
     return (
 
@@ -123,8 +142,14 @@ export const Register = () => {
                         />
                     </div>
 
-                    <ButtonComponent />
 
+                    {loading ? (
+
+                        <ButtonLoading />
+
+                    ) : (
+                        <ButtonComponent text="Registrarse" />
+                    )}
                 </form>
 
             </div>
