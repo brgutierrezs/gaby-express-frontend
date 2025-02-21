@@ -16,80 +16,79 @@ import Login from "../pages/public/LoginUser/Login";
 
 
 
-export const AppRoutes = createBrowserRouter(
-    
+export const AppRoutes = createBrowserRouter([
+    // Rutas Públicas
+    {
+        path: '/',
+        element: <PublicRoute><IndexLayout /></PublicRoute>,
+        children: [
+            {
+                index: true,
+                element: <Home />
+            },
+            {
+                path: '/about',
+                element: <About />
+            },
+            {
+                path: '*',
+                element: <NotFound />
+            },
+            {
+                path: "/register",
+                element: <Register />
+            },
+            {
+                path: "/products",
+                element: <Product />
+            },
+            {
+                path: "product/:id",
+                element: <ProductDetail />
+            },
+            {
+                path: '/login',
+                element: <Login />
+            }
+        ]
+    },
 
-    [
-        //Rutas Publicas
-        {
-            path: '/',
-            element: <IndexLayout />,
-            children: [
-                {
-                    index: true,
-                    element: <PublicRoute> <Home /></PublicRoute>
-                },
+    // Rutas privadas
+    {
+        path: '/dashboard',
+        element: <PrivateRoutes><IndexLayout /></PrivateRoutes>,
+        children: [
+            {
+                index: true,
+                element: <DashBoard />
+            },
+            // {
+            //     path: 'profile',
+            //     element: <ProfilePage />
+            // },
+            // {
+            //     path: 'orders',
+            //     element: <OrdersPage />
+            // },
+            // Otras páginas del dashboard...
+            {
+                path: 'cerrar-session',
+                element: <LogOut />
+            }
+        ]
+    },
 
-                {
-                    path: '/about',
-                    element: <PublicRoute><About /></PublicRoute>
-                },
-
-                {
-                    path: '*',
-                    element: <PublicRoute><NotFound /></PublicRoute>
-                },
-                {
-                    path: "/register",
-                    element: <PublicRoute><Register /></PublicRoute>
-                },
-                {
-                    path: "/products",
-                    element: <PublicRoute><Product /></PublicRoute>,
-
-                },
-                {
-                    path: "product/:id",// Subruta para detalle de producto
-                    element: <PublicRoute><ProductDetail /></PublicRoute>
-
-                },
-                {
-                    path:'/login',
-                    element:<PublicRoute><Login/></PublicRoute>
-                }
-
-
-
-            ]
-        },
-
-        //Rutas privadas
-        {
-            path: '/dashboard',
-            element: <IndexLayout />,
-            children: [
-                {
-                    index: true,
-                    element: <PrivateRoutes > <DashBoard /> </PrivateRoutes>
-                },
-                {
-                    path: 'cerrar-session',
-                    element: <PrivateRoutes> <LogOut /></PrivateRoutes>
-                }
-
-            ]
-        },
-        //Rutas de administrador
-        {
-            path: '/admin',
-            children: [
-                {
-                    index: true,
-                    element: <AdminRoutes><CreateProduct /></AdminRoutes>
-                }
-            ]
-        }
-
-    ]
-);
+    // Rutas de administrador
+    {
+        path: '/admin',
+        element: <AdminRoutes><IndexLayout /></AdminRoutes>,
+        children: [
+            {
+                index: true,
+                element: <CreateProduct />
+            },
+            // Otras rutas de administración...
+        ]
+    }
+]);
 
