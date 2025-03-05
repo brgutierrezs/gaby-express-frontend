@@ -2,9 +2,12 @@ import { Menu, X } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import CategoriesSubmenu from '../common/mobileSubMenu/CategoriesSubmenu';
 
 const HamburgerMenu = ({ auth }) => {
     const [isOpen, setIsOpen] = useState(false);
+
+
 
     const toggleMenu = () => {
         setIsOpen((prev) => !prev);
@@ -22,9 +25,9 @@ const HamburgerMenu = ({ auth }) => {
     }, [isOpen]);
 
     return (
-        <div className="relative">
+        <div className="relative  ">
             {/* Botón del menú hamburguesa */}
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 ">
                 <Link to="/cart" className="hover:text-gray-200">🛒 Cart</Link>
                 <button
                     onClick={toggleMenu}
@@ -42,7 +45,7 @@ const HamburgerMenu = ({ auth }) => {
                     fixed top-0 left-0 w-64 h-full bg-white shadow-lg 
                     transform transition-transform duration-500 ease-in-out
                     ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-                    z-40 p-6
+                    z-40 p-6 
                 `}
             >
                 <nav className="mt-3 border  border-gray-100 shadow-md rounded-md h-full ">
@@ -50,7 +53,7 @@ const HamburgerMenu = ({ auth }) => {
                         {!auth?.isAuthenticated ? <>
                             <li>
                                 <Link
-                                    to="/iniciar-session"
+                                    to="/login"
                                     className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
                                     onClick={toggleMenu}
                                 >
@@ -69,38 +72,33 @@ const HamburgerMenu = ({ auth }) => {
                         </>
                             :
                             <li>
-                            <Link
-                                to="/cerrar-sesion"
-                                className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
-                                
-                            >
-                                Cerrar Sesion
-                            </Link>
-                        </li>}
+                                <Link
+                                    to="/dashboard/cerrar-session"
+                                    className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
+                                    onClick={toggleMenu}
+                                >
+                                    Cerrar Sesion
+                                </Link>
+                            </li>}
 
 
-                        <li>
-                            <Link
-                                to="/categorias"
-                                className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
-                            >
-                                Categorías
-                            </Link>
-                        </li>
+                        <CategoriesSubmenu toggleMenu={toggleMenu} />
                         <li>
                             <Link
                                 to="/carrito"
                                 className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
+                                onClick={toggleMenu}
                             >
                                 Carrito
                             </Link>
                         </li>
                         <li>
                             <Link
-                                to="/perfil"
+                                to="/dashboard"
                                 className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
+                                onClick={toggleMenu}
                             >
-                                Perfil
+                                Panel de Usuario
                             </Link>
                         </li>
                     </ul>

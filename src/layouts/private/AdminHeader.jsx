@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom"
 import HamburgerMenu from "../../components/menu/HamburgerMenu";
 import LoginModal from "../../pages/public/LoginUser/LoginModal";
-import NavigationBar from "../../components/common/navBarMenu/NavigationBar ";
+import { useAuth } from "../../hooks/authContext";
+import UserOption from "../../components/menu/UserOption";
 
-
-const Header = () => {
+const AdminHeader = () => {
 
     const [isLoginOpen, setIsLoginOpen] = useState(false);
+    const { auth } = useAuth();
 
     const toggleLoginModal = () => {
         setIsLoginOpen((prev) => !prev);
@@ -37,23 +38,27 @@ const Header = () => {
 
                     {/* User Options */}
                     <div className=" hidden lg:flex space-x-4  items-center ">
-                        <Link className="hover:text-gray-200 " onClick={toggleLoginModal}>{isLoginOpen ? "Cerrar Sesion" : "Iniciar Sesion "}</Link>
-                        <Link to="/register" className="hover:text-gray-200 " > Registrarse</Link>
-                        <Link to='/cart' className="hover:text-gray-200">🛒 Cart</Link>
+                        <UserOption auth={auth} toggleLoginModal={toggleLoginModal} />
                     </div>
 
                     {/* User Options  Mobile*/}
                     <div className="lg:hidden  ">
                         {/* Mobile Menu Icon */}
 
-                        <HamburgerMenu />
+                        <HamburgerMenu auth={auth}/>
                     </div>
 
                 </div>
 
                 {/* Navigation Bar */}
-               
-                <NavigationBar/>
+                <nav className="bg-red-700 hidden   md:flex ">
+                    <div className="container mx-auto px-4 py-2 flex space-x-4">
+                        <Link className="hover:text-gray-300">Categorias</Link>
+                        <Link className="hover:text-gray-300">Ofertas</Link>
+                        <Link className="hover:text-gray-300">Otros</Link>
+                        <Link className="hover:text-gray-300">Mas</Link>
+                    </div>
+                </nav>
 
                 {/* Modal Login */}
                 <LoginModal toggleLoginModal={toggleLoginModal} isLoginOpen={isLoginOpen} />
@@ -76,4 +81,4 @@ const Header = () => {
     )
 }
 
-export default Header
+export default AdminHeader

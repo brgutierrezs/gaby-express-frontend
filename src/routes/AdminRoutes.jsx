@@ -1,12 +1,13 @@
 import { Navigate } from "react-router-dom";
 import PropTypes from 'prop-types'
+import {useAuth} from "../hooks/authContext";
 
 const AdminRoutes = ({ children }) => {
 
-    const roll = false
-    console.log(roll);
+    const {auth} =  useAuth();
+   
 
-    return roll !== 'admin'? <Navigate to='/' /> : children
+    return auth.user?.role !== 'admin'? <Navigate to='/' /> : children
 
     
 }

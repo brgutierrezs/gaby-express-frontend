@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import PropTypes from 'prop-types';
 import { FaUserCircle } from "react-icons/fa"; // Importamos el icono
 const UserOption = ({ auth, toggleLoginModal }) => {
-    console.log(auth)
+    //console.log(auth)
     return (
         <>
             {auth.isAuthenticated ?

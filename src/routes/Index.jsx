@@ -13,6 +13,8 @@ import AdminRoutes from "./AdminRoutes";
 import IndexLayout from "../layouts/IndexLayout";
 import LogOut from "../pages/private/user/LogOut";
 import Login from "../pages/public/LoginUser/Login";
+import DashBoardAdmin from "../pages/admin/DashBoardAdmin";
+import ProductCategory from "../pages/public/product/ProductCategory ";
 
 
 
@@ -49,6 +51,10 @@ export const AppRoutes = createBrowserRouter([
             {
                 path: '/login',
                 element: <Login />
+            },
+            {
+                path: "/categoria/:id", // Permite cualquier id-nombre en la URL,
+                element: <ProductCategory />
             }
         ]
     },
@@ -80,13 +86,19 @@ export const AppRoutes = createBrowserRouter([
 
     // Rutas de administrador
     {
-        path: '/admin',
+        path: '/admin-dashboard',
         element: <AdminRoutes><IndexLayout /></AdminRoutes>,
         children: [
             {
-                index: true,
-                element: <CreateProduct />
+                index:true,
+                element: <DashBoardAdmin />
+
             },
+            {
+                path: 'create-product',
+                element: <CreateProduct />
+            }
+
             // Otras rutas de administración...
         ]
     }

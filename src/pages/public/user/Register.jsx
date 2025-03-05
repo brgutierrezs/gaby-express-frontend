@@ -89,8 +89,8 @@ export const Register = () => {
     return (
 
 
-        <div className="flex items-center justify-center z-50">
-            <div className="bg-white rounded-md p-6 w-full max-w-md">
+        <div className="flex items-center justify-center ">
+            <div className="bg-white rounded-md p-6 w-full max-w-md  ">
                 <h2 className="text-2xl font-bold mb-4 text-center text-black">Register</h2>
                 {message && (
                     <p className={`mb-4 p-3 rounded ${message.includes("Error") ?
@@ -141,6 +141,7 @@ export const Register = () => {
                             value={registerForm.email}
                         />
                     </div>
+                    
 
 
                     {loading ? (
@@ -148,7 +149,10 @@ export const Register = () => {
                         <ButtonLoading />
 
                     ) : (
+
                         <ButtonComponent text="Registrarse" />
+
+
                     )}
                 </form>
 
