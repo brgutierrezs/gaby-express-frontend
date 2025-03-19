@@ -20,7 +20,7 @@ const ProductCard = ({ product, onPreview, handleAddToCart }) => {
             <h3 title={product.name} className=' text-xl font-semibold mb-2 truncate '>{product.name}</h3>
 
             {/* Precio */}
-            <p className="text-xl font-bold text-rose-600 mb-4">${product.price}</p>
+            <p className="text-xl font-bold text-rose-600 mb-4">${parseInt(product.price)}</p>
             {/* Botones */}
             <div className="flex gap-2 justify-center">
                 <button

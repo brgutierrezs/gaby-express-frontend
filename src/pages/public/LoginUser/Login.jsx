@@ -91,7 +91,7 @@ const Login = () => {
     }
 
     return (
-        <div className="flex justify-center items-center z50">
+        <div className="flex justify-center items-center z-10">
             <div className="bg-white rounded-md p-6 w-full max-w-md">
                 <h2 className="text-2xl font-bold mb-4 text-center text-black">Iniciar Sesión </h2>
                 {message && (
@@ -118,9 +118,9 @@ const Login = () => {
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                             Contraseña
                         </label>
-                        <div className="relative">
+                        <div className="flex items-center border border-gray-300 rounded-md shadow-sm focus-within:ring-indigo-500 focus-within:border-indigo-500">
                             <input
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                className="mt-1 block w-full px-3 py-2 pr-10  focus:outline-none "
                                 placeholder="Contraseña"
                                 name="password"
                                 value={formLogin.password}
@@ -129,7 +129,7 @@ const Login = () => {
                             />
                             <button
                                 type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                 className="pr-3 text-gray-500 focus:outline-none"
                                 onClick={togglePasswordVisibility}
                             >
                                 {showPassword ? (

@@ -4,6 +4,7 @@ import HamburgerMenu from "../../components/menu/HamburgerMenu";
 import LoginModal from "../../pages/public/LoginUser/LoginModal";
 import { useAuth } from "../../hooks/authContext";
 import UserOption from "../../components/menu/UserOption";
+import NavigationBar from "../../components/common/navBarMenu/NavigationBar ";
 
 const AdminHeader = () => {
 
@@ -45,20 +46,13 @@ const AdminHeader = () => {
                     <div className="lg:hidden  ">
                         {/* Mobile Menu Icon */}
 
-                        <HamburgerMenu auth={auth}/>
+                        <HamburgerMenu auth={auth} />
                     </div>
 
                 </div>
 
                 {/* Navigation Bar */}
-                <nav className="bg-red-700 hidden   md:flex ">
-                    <div className="container mx-auto px-4 py-2 flex space-x-4">
-                        <Link className="hover:text-gray-300">Categorias</Link>
-                        <Link className="hover:text-gray-300">Ofertas</Link>
-                        <Link className="hover:text-gray-300">Otros</Link>
-                        <Link className="hover:text-gray-300">Mas</Link>
-                    </div>
-                </nav>
+                <NavigationBar />
 
                 {/* Modal Login */}
                 <LoginModal toggleLoginModal={toggleLoginModal} isLoginOpen={isLoginOpen} />

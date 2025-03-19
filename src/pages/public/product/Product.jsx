@@ -31,6 +31,7 @@ const Product = () => {
     if (loading) return <p>Cargando productos...</p>;
     if (error) return <p>Error: {error}</p>;
     // Funciones para botones
+    
     const handlePreview = (product) => {
         alert(`Previsualizando: ${product.title}`);
     };

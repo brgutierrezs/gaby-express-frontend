@@ -57,7 +57,7 @@ const NavigationBar = ({ className }) => {
 
                     {isCategoriesOpen && (
                         <div className="absolute top-full left-0 bg-white rounded-lg shadow-lg w-56 mt-2 p-2 z-50 transition-opacity duration-200">
-                            <CategoriesList categories={categories} toggleCategories={toggleCategories}/>
+                            <CategoriesList categories={categories} toggleCategories={toggleCategories} />
                         </div>
                     )}
                 </div>

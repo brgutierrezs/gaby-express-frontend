@@ -15,6 +15,8 @@ import LogOut from "../pages/private/user/LogOut";
 import Login from "../pages/public/LoginUser/Login";
 import DashBoardAdmin from "../pages/admin/DashBoardAdmin";
 import ProductCategory from "../pages/public/product/ProductCategory ";
+import UpdateProduct from "../pages/admin/product/UpdateProduct";
+import SearchProduct from "../pages/admin/product/SearchProduct";
 
 
 
@@ -77,6 +79,7 @@ export const AppRoutes = createBrowserRouter([
             //     element: <OrdersPage />
             // },
             // Otras páginas del dashboard...
+
             {
                 path: 'cerrar-session',
                 element: <LogOut />
@@ -97,7 +100,16 @@ export const AppRoutes = createBrowserRouter([
             {
                 path: 'create-product',
                 element: <CreateProduct />
+            },
+            {
+                path: 'edit-product/:id',
+                element: <UpdateProduct />
+            },
+            {
+                path: 'all-products',
+                element: <SearchProduct />
             }
+
 
             // Otras rutas de administración...
         ]

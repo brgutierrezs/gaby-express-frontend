@@ -25,7 +25,7 @@ const HamburgerMenu = ({ auth }) => {
     }, [isOpen]);
 
     return (
-        <div className="relative  ">
+        <div className="relative z-50 ">
             {/* Botón del menú hamburguesa */}
             <div className="flex space-x-4 ">
                 <Link to="/cart" className="hover:text-gray-200">🛒 Cart</Link>
@@ -48,7 +48,7 @@ const HamburgerMenu = ({ auth }) => {
                     z-40 p-6 
                 `}
             >
-                <nav className="mt-3 border  border-gray-100 shadow-md rounded-md h-full ">
+                <nav className="mt-3 border  border-gray-100 shadow-md rounded-md h-full z-50">
                     <ul className="space-y-6">
                         {!auth?.isAuthenticated ? <>
                             <li>
@@ -80,6 +80,15 @@ const HamburgerMenu = ({ auth }) => {
                                     Cerrar Sesion
                                 </Link>
                             </li>}
+                        <li>
+                            <Link
+                                to="/dashboard"
+                                className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
+                                onClick={toggleMenu}
+                            >
+                                Panel de Usuario
+                            </Link>
+                        </li>
 
 
                         <CategoriesSubmenu toggleMenu={toggleMenu} />
@@ -92,15 +101,7 @@ const HamburgerMenu = ({ auth }) => {
                                 Carrito
                             </Link>
                         </li>
-                        <li>
-                            <Link
-                                to="/dashboard"
-                                className="block py-2 px-4 hover:bg-gray-100 rounded-md text-black"
-                                onClick={toggleMenu}
-                            >
-                                Panel de Usuario
-                            </Link>
-                        </li>
+
                     </ul>
                 </nav>
             </div>
