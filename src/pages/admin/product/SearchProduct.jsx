@@ -1,275 +1,260 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ProductCard from "../../../components/products/ProductCard";
 import useAxios from "../../../hooks/useAxios";
 import globalUrl from "../../../config/globalUrl";
 
 const SearchProduct = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [message, setMessage] = useState("");
   const [filters, setFilters] = useState({
-    priceRange: {
-      min: 0,
-      max: 200000,
-    },
-    selectedCategories: [],
     priceMin: 0,
     priceMax: 200000,
+    selectedCategory: "",
+  });
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
   });
 
-  const { data, loading, error, fetchData } = useAxios();
-
-  // Fetch products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      await fetchData(globalUrl + "/product/all-product", 'GET');
-    };
-    fetchProducts();
-  }, []);
-
-  // Fetch categories from API
-  useEffect(() => {
-    const getCategories = async () => {
-      try {
-        const response = await fetchData(globalUrl + '/product/all-category', 'GET');
-        if (response?.categories) {
-          setCategories(response.categories);
-        }
-      } catch (error) {
-        setMessage(`Error al obtener las categorias: ${error?.message || 'Desconocido'}`);
-      }
-    };
-    getCategories();
-  }, []);
-
-  // Process product data
-  useEffect(() => {
-    if (data?.products) {
-      const productsData = data.products;
-      setProducts(productsData);
-      setFilteredProducts(productsData);
-      
-      // Find min and max prices
-      const prices = productsData.map(product => parseFloat(product.price));
-      const minPrice = Math.min(...prices);
-      const maxPrice = Math.max(...prices);
-      setFilters(prev => ({
-        ...prev,
-        priceRange: { min: minPrice, max: maxPrice },
-        priceMin: minPrice,
-        priceMax: maxPrice,
-      }));
-    }
-  }, [data]);
-
-  // Apply filters
-  useEffect(() => {
-    if (products.length > 0) {
-      let result = [...products];
-      
-      // Filter by search term
-      if (searchTerm.trim() !== "") {
-        const term = searchTerm.toLowerCase();
-        result = result.filter(product => 
-          product.title?.toLowerCase().includes(term) || 
-          product.description?.toLowerCase().includes(term)
-        );
-      }
-      
-      // Filter by selected categories
-      if (filters.selectedCategories.length > 0) {
-        result = result.filter(product => 
-          filters.selectedCategories.includes(product.category)
-        );
-      }
-      
-      // Filter by price range
-      result = result.filter(product => {
-        const price = parseFloat(product.price);
-        return price >= filters.priceMin && price <= filters.priceMax;
-      });
-      
-      setFilteredProducts(result);
-    }
-  }, [searchTerm, filters.selectedCategories, filters.priceMin, filters.priceMax, products]);
-
-  // Handle category selection
-  const handleCategoryChange = (category) => {
-    setFilters(prev => {
-      const isSelected = prev.selectedCategories.includes(category);
-      let newSelectedCategories;
-
-      if (isSelected) {
-        newSelectedCategories = prev.selectedCategories.filter(cat => cat !== category);
-      } else {
-        newSelectedCategories = [...prev.selectedCategories, category];
-      }
-
-      return {
-        ...prev,
-        selectedCategories: newSelectedCategories,
-      };
-    });
-  };
-
-  // Handle price range change
-  const handlePriceChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: parseFloat(value),
-    }));
-  };
-
-  // Reset all filters
-  const resetFilters = () => {
-    setFilters(prev => ({
-      ...prev,
-      selectedCategories: [],
-      priceMin: prev.priceRange.min,
-      priceMax: prev.priceRange.max,
-    }));
-    setSearchTerm("");
-  };
-
-  // Renderizado condicional basado en el estado
-  if (loading) return <p>Cargando productos...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  // Funciones para botones
   const handlePreview = (product) => {
     alert(`Previsualizando: ${product.title}`);
   };
 
-  const handleAddToCart = (product) => {
-    alert(`Producto agregado al carrito: ${product.title}`);
+  // Para controlar si debemos llamar a la API
+  const [shouldFetch, setShouldFetch] = useState(false);
+  const initialLoad = useRef(true);
+  const searchTimeout = useRef(null);
+
+  const { data, loading, error, fetchData } = useAxios();
+
+  // Función para construir los parámetros de consulta
+  const buildQueryParams = () => {
+    const params = new URLSearchParams();
+    params.append("page", String(pagination.currentPage));
+    if (searchTerm.trim()) params.append("search", searchTerm);
+    if (filters.selectedCategory) params.append("categoryId", filters.selectedCategory);
+    params.append("minPrice", String(filters.priceMin));
+    params.append("maxPrice", String(filters.priceMax));
+    params.append("order", "price");
+    params.append("sort", "ASC");
+    return params.toString();
   };
 
+  // Función segura para buscar productos
+  const fetchProducts = async () => {
+    try {
+      const queryParams = buildQueryParams();
+      await fetchData(`${globalUrl}/product/all-product?${queryParams}`, "GET");
+    } catch (err) {
+      console.error("Error al buscar productos:", err);
+    }
+  };
+
+  // Cargar categorías una sola vez al inicio
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const response = await fetchData(`${globalUrl}/product/all-category`, "GET");
+        if (response?.categories) {
+          setCategories(response.categories);
+        }
+      } catch (err) {
+        console.error("Error al obtener categorías:", err);
+      }
+    };
+
+    // Solo cargar categorías una vez
+    getCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Efecto para la carga inicial
+  useEffect(() => {
+    if (initialLoad.current) {
+      fetchProducts();
+      initialLoad.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Efecto para manejar cambios que requieren nueva búsqueda
+  useEffect(() => {
+    if (shouldFetch) {
+      fetchProducts();
+      setShouldFetch(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldFetch]);
+
+  // Efecto específico para cambios de página
+  useEffect(() => {
+    if (!initialLoad.current) {
+      // Solo ejecutar si no es la carga inicial
+      fetchProducts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination.currentPage]);
+
+  // Actualizar productos cuando llegan datos
+  useEffect(() => {
+    if (data?.products) {
+      setProducts(data.products);
+      setPagination({
+        currentPage: parseInt(data.currentPage) || 1,
+        totalPages: parseInt(data.totalPages) || 1
+      });
+    }
+  }, [data]);
+
+  // Implementación manual de debounce para la búsqueda
+  const debouncedSearch = (func) => {
+    // Limpiar el timeout anterior si existe
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+
+    // Configurar un nuevo timeout
+    searchTimeout.current = setTimeout(() => {
+      func();
+      setPagination(prev => ({ ...prev, currentPage: 1 }));
+      setShouldFetch(true);
+    }, 500);
+  };
+
+  // Manejadores de eventos con debounce manual
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    debouncedSearch(() => console.log("Buscando:", value));
+  };
+
+  const handleCategoryChange = (e) => {
+    const value = e.target.value;
+    setFilters(prev => ({ ...prev, selectedCategory: value }));
+    debouncedSearch(() => console.log("Categoría seleccionada:", value));
+  };
+
+  const resetFilters = () => {
+    setFilters({ priceMin: 0, priceMax: 200000, selectedCategory: "" });
+    setSearchTerm("");
+    // Reiniciar inmediatamente
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
+    setShouldFetch(true);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      console.log("Cambio de página a:", newPage);
+      setPagination(prev => ({ ...prev, currentPage: newPage }));
+    }
+  };
+
+  // Limpiar el timeout cuando el componente se desmonta
+  useEffect(() => {
+    return () => {
+      if (searchTimeout.current) {
+        clearTimeout(searchTimeout.current);
+      }
+    };
+  }, []);
+
   return (
-    <div className="flex flex-col">
-      {/* Search Bar */}
-      <div className="p-4 bg-white border-b">
-        <div className="max-w-2xl mx-auto">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Buscar productos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500">
-              🔍
-            </button>
-          </div>
-        </div>
+    <div className="xl:flex-row flex flex-col p-4 gap-4 " >
+      <div className="xl:hidden bg-white shadow-md p-4 rounded-lg flex flex-col  sm:flex-row items-center gap-4">
+        <input
+          type="text"
+          placeholder="Buscar productos..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="w-full sm:w-1/3 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+        />
+
+        <select
+          value={filters.selectedCategory}
+          onChange={handleCategoryChange}
+          className="w-full sm:w-1/4 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Todas las categorías</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+
+        <button onClick={resetFilters} className="text-blue-500 text-sm hover:underline">
+          Limpiar filtros
+        </button>
       </div>
 
-      <div className="flex flex-row">
-        {/* Filter Sidebar */}
-        <div className="w-64 p-4 border-r bg-gray-50">
-          <div className="mb-6">
-            <h3 className="font-bold text-lg mb-2">Filtros</h3>
-            <button 
-              onClick={resetFilters}
-              className="text-sm text-blue-500 hover:underline"
-            >
-              Limpiar filtros
-            </button>
-          </div>
+      <div className=" hidden xl:flex xl:flex-col bg-white shadow-md  p-6   rounded-lg  flex-col sm:flex-row items-center gap-4 h-[450px] ">
+        <input
+          type="text"
+          placeholder="Buscar productos..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+        />
 
-          {/* Categories Filter */}
-          <div className="mb-6">
-            <h4 className="font-semibold mb-2">Categorías</h4>
-            {message && <p className="text-red-500 text-sm">{message}</p>}
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {categories && categories.length > 0 ? (
-                categories.map(category => (
-                  <div key={category.id} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id={`category-${category.id}`}
-                      checked={filters.selectedCategories.includes(category.id)}
-                      onChange={() => handleCategoryChange(category.id)}
-                      className="mr-2"
-                    />
-                    <label htmlFor={`category-${category.id}`} className="text-sm">
-                      {category.name}
-                    </label>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-gray-500">Cargando categorías...</p>
-              )}
-            </div>
-          </div>
+        <select
+          value={filters.selectedCategory}
+          onChange={handleCategoryChange}
+          className="w-full  px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+        >
+         
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
 
-          {/* Price Range Filter */}
-          <div className="mb-6">
-            <h4 className="font-semibold mb-2">Rango de Precio</h4>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm">Mínimo: ${filters.priceMin}</label>
-                <input
-                  type="range"
-                  name="priceMin"
-                  min={filters.priceRange.min}
-                  max={filters.priceRange.max}
-                  value={filters.priceMin}
-                  onChange={handlePriceChange}
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label className="block text-sm">Máximo: ${filters.priceMax}</label>
-                <input
-                  type="range"
-                  name="priceMax"
-                  min={filters.priceRange.min}
-                  max={filters.priceRange.max}
-                  value={filters.priceMax}
-                  onChange={handlePriceChange}
-                  className="w-full"
-                />
-              </div>
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>${filters.priceRange.min}</span>
-                <span>${filters.priceRange.max}</span>
-              </div>
-            </div>
-          </div>
+        <button onClick={resetFilters} className="text-blue-500 text-sm hover:underline">
+          Limpiar filtros
+        </button>
+      </div>
 
-          {/* Results count */}
-          <div className="text-sm text-gray-500">
-            {filteredProducts.length} productos encontrados
-          </div>
-        </div>
-
-        {/* Product Grid */}
+      <div className="flex flex-wrap gap-4 mt-4">
         <div className="flex-1">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 box-border">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onPreview={handlePreview}
-                handleAddToCart={handleAddToCart}
-              />
-            ))}
-            {filteredProducts.length === 0 && (
-              <div className="col-span-full text-center py-10">
-                <p className="text-gray-500">No se encontraron productos con los filtros seleccionados.</p>
-                <button 
-                  onClick={resetFilters} 
-                  className="mt-2 text-blue-500 hover:underline"
-                >
-                  Restablecer filtros
-                </button>
-              </div>
-            )}
-          </div>
+          {loading ? (
+            <p className="text-center text-gray-500">Cargando productos...</p>
+          ) : error ? (
+            <p className="text-center text-red-500">
+              Error al cargar productos. Por favor, inténtalo de nuevo.
+            </p>
+          ) : products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} handlePreview={handlePreview} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">No se encontraron productos.</p>
+          )}
+
+          {pagination.totalPages > 1 && (
+            <div className="flex justify-center py-6 space-x-2">
+              <button
+                onClick={() => handlePageChange(pagination.currentPage - 1)}
+                disabled={pagination.currentPage === 1}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50"
+              >
+                ‹
+              </button>
+              <span>Página {pagination.currentPage} de {pagination.totalPages}</span>
+              <button
+                onClick={() => handlePageChange(pagination.currentPage + 1)}
+                disabled={pagination.currentPage === pagination.totalPages}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50"
+              >
+                ›
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

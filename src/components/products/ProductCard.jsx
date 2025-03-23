@@ -5,7 +5,7 @@ const ProductCard = ({ product, onPreview, handleAddToCart }) => {
 
     return (
 
-        <div className="border border-gray-200 rounded-lg shadow-md p-4 bg-white hover:shadow-lg transition duration-300  ">
+        <div className="border border-gray-200 rounded-lg shadow-md p-4 bg-white hover:shadow-lg transition duration-300   ">
             {/* Imagen del Producto */}
             <Link to={'/product/'+product.id}>
             <ProductImage
